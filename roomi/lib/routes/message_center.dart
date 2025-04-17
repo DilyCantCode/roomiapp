@@ -7,7 +7,7 @@ class MessageCenterScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Route 5')),
+      appBar: AppBar(title: const Text('messages')),
       body: Center(
         child: ElevatedButton(
           onPressed: () => Navigator.pop(context),

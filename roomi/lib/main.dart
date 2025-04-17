@@ -5,8 +5,9 @@ import 'routes/settings.dart';
 import 'routes/lease.dart';
 import 'routes/message_center.dart';
 import 'routes/route6.dart';
+import 'login.dart';
 
-void main() {
+/*void main() {
   runApp(const MyApp());
 }
 
@@ -48,8 +49,36 @@ class MyApp extends StatelessWidget {
       },
     );
   }
+}*/
+void main() {
+  runApp(const MyApp());
 }
 
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Roomi',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+      ),
+      // Set LoginScreen as the home
+      home: const LoginScreen(),
+      routes: {
+        '/home': (context) => const MyHomePage(title: 'Roomi App :)'),
+        '/create_circle': (context) => const CreateCircleScreen(),
+        '/bills': (context) => const BillsScreen(),
+        '/settings': (context) => const SettingsScreen(),
+        '/route4': (context) => const LeaseScreen(),
+        '/message_center': (context) => const MessageCenterScreen(),
+        '/route6': (context) => const Route6Screen(),
+      },
+    );
+  }
+}
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
