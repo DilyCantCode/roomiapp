@@ -1,13 +1,13 @@
-// lib/routes/route4.dart
+// lib/routes/message_center.dart
 import 'package:flutter/material.dart';
 
-class Route4Screen extends StatelessWidget {
-  const Route4Screen({super.key});
+class MessageCenterScreen extends StatelessWidget {
+  const MessageCenterScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Route 4')),
+      appBar: AppBar(title: const Text('Route 5')),
       body: Center(
         child: ElevatedButton(
           onPressed: () => Navigator.pop(context),

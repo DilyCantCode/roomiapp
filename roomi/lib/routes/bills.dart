@@ -1,13 +1,13 @@
-// lib/routes/route1.dart
+// lib/routes/bills.dart
 import 'package:flutter/material.dart';
 
-class Route1Screen extends StatelessWidget {
-  const Route1Screen({super.key});
+class BillsScreen extends StatelessWidget {
+  const BillsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Route 1')),
+      appBar: AppBar(title: const Text('view bills')),
       body: Center(
         child: ElevatedButton(
           onPressed: () => Navigator.pop(context),

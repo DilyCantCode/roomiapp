@@ -1,8 +1,8 @@
-// lib/routes/route3.dart
+// lib/routes/settings.dart
 import 'package:flutter/material.dart';
 
-class Route3Screen extends StatelessWidget {
-  const Route3Screen({super.key});
+class SettingsScreen extends StatelessWidget {
+  const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'routes/route1.dart';
-import 'routes/route2.dart';
-import 'routes/route3.dart';
-import 'routes/route4.dart';
-import 'routes/route5.dart';
+import 'routes/create_circle.dart';
+import 'routes/bills.dart';
+import 'routes/settings.dart';
+import 'routes/lease.dart';
+import 'routes/message_center.dart';
 import 'routes/route6.dart';
 
 void main() {
@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Roomi',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -37,13 +37,13 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Roomi App :)'),
       routes: {
-        '/route1': (context) => const Route1Screen(),
-        '/route2': (context) => const Route2Screen(),
-        '/route3': (context) => const Route3Screen(),
-        '/route4': (context) => const Route4Screen(),
-        '/route5': (context) => const Route5Screen(),
+        '/create_circle': (context) => const CreateCircleScreen(),
+        '/bills': (context) => const BillsScreen(),
+        '/settings': (context) => const SettingsScreen(),
+        '/route4': (context) => const LeaseScreen(),
+        '/message_center': (context) => const MessageCenterScreen(),
         '/route6': (context) => const Route6Screen(),
       },
     );
@@ -69,19 +69,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -120,20 +107,62 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text(
-              'You have pushed the button this many times:',
+              'click to go to area',
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+            ElevatedButton(
+              child: const Text('Create a circle'),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder:
+                 (context) => const CreateCircleScreen()),
+                );
+              }
             ),
+              ElevatedButton(
+              child: const Text('View Monthly Bills'),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder:
+                 (context) => const BillsScreen()),
+                );
+              }
+            ),
+              ElevatedButton(
+              child: const Text('Settings'),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder:
+                 (context) => const SettingsScreen()),
+                );
+              }
+            ),
+             ElevatedButton(
+              child: const Text('Lease'),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder:
+                 (context) => const LeaseScreen()),
+                );
+              }
+              ),
+              ElevatedButton(
+              child: const Text('message center'),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder:
+                 (context) => const MessageCenterScreen()),
+                );
+              }
+              ),
+  
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
