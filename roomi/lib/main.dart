@@ -6,8 +6,12 @@ import 'routes/lease.dart';
 import 'routes/message_center.dart';
 import 'routes/route6.dart';
 import 'login.dart';
+import 'package:firebase_core/firebase_core.dart'; // we add firebase 
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(); // initialize firebase
   runApp(const MyApp());
 }
 
