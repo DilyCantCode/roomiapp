@@ -51,7 +51,14 @@ class MyHomePage extends StatefulWidget {
   // case the title) provided by the parent (in this case the App widget) and
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
+  Future<void> addTestCircle() async {
+    await FirebaseFirestore.instance.collection('circles').add({
+     'name': 'Test Circle',
+      'created_at': FieldValue.serverTimestamp(),
+    });
+  }
 
+  
   final String title;
 
   @override
@@ -59,6 +66,12 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  Future<void> addTestCircle() async {
+   await FirebaseFirestore.instance.collection('circles').add({
+    'name': 'Test Circle',
+    'created_at': FieldValue.serverTimestamp(),
+    });
+  }
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -101,14 +114,10 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             const SizedBox(height: 50),
             ElevatedButton(
-              child: const Text('Create a circle'),
+              child: const Text('Add Test Circle to Firestore'),
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder:
-                 (context) => const CreateCircleScreen()),
-                );
-              }
+                addTestCircle(); // this will insert the dummy circle into Firestore
+              },
             ),
             const SizedBox(height: 50),
               ElevatedButton(
