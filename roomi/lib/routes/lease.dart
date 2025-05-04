@@ -9,10 +9,24 @@ class LeaseScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Lease')),
       body: Center(
-        child: ElevatedButton(
+        child: Column(
+         // mainAxisAlignment: MainAxisAlignment.,
+          children: <Widget>[
+          const Text('Upload your lease'),
+          const SizedBox(height: 25),
+        ElevatedButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Upload PDF'),
+        ),
+        const SizedBox(height: 25),
+        ElevatedButton(
           onPressed: () => Navigator.pop(context),
           child: const Text('Back to Home'),
         ),
+
+
+          ]
+        )
       ),
     );
   }

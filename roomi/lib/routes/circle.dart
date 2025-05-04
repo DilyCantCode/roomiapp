@@ -1,13 +1,13 @@
-// lib/routes/route6.dart
+// lib/routes/Circle.dart
 import 'package:flutter/material.dart';
 
-class Route6Screen extends StatelessWidget {
-  const Route6Screen({super.key});
+class CircleScreen extends StatelessWidget {
+  const CircleScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Route 6')),
+      appBar: AppBar(title: const Text('Circle')),
       body: Center(
         child: ElevatedButton(
           onPressed: () => Navigator.pop(context),

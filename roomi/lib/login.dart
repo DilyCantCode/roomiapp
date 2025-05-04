@@ -40,7 +40,7 @@ class LoginScreen extends StatelessWidget {
             // Login Button
             ElevatedButton(
               onPressed: () {
-                // Simply navigate to main page on any button press
+                // goes to main not wokring yet
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(

@@ -4,7 +4,7 @@ import 'routes/bills.dart';
 import 'routes/settings.dart';
 import 'routes/lease.dart';
 import 'routes/message_center.dart';
-import 'routes/route6.dart';
+import 'routes/circle.dart';
 import 'login.dart';
 import 'package:firebase_core/firebase_core.dart'; // we add firebase 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
         '/settings': (context) => const SettingsScreen(),
         '/route4': (context) => const LeaseScreen(),
         '/message_center': (context) => const MessageCenterScreen(),
-        '/route6': (context) => const Route6Screen(),
+        '/circle': (context) => const CircleScreen(),
       },
     );
   }
@@ -91,6 +91,81 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Center(
+  child: Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      // First column
+      Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          ElevatedButton(
+            child: const Text('Create a circle'),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const CreateCircleScreen()),
+              );
+            },
+          ),
+          ElevatedButton(
+            child: const Text('View Monthly Bills'),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const BillsScreen()),
+              );
+            },
+          ),
+          ElevatedButton(
+            child: const Text('Settings'),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SettingsScreen()),
+              );
+            },
+          ),
+        ],
+      ),
+      const SizedBox(width: 40), // Space between columns
+      // Second column
+      Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          ElevatedButton(
+            child: const Text('Lease'),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const LeaseScreen()),
+              );
+            },
+          ),
+          ElevatedButton(
+            child: const Text('Message Center'),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const MessageCenterScreen()),
+              );
+            },
+          ),
+          ElevatedButton(
+            child: const Text('Circle'),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const CircleScreen()),
+              );
+            },
+          ),
+        ],
+      ),
+    ],
+  ),
+),
+
+    /*  body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
         child: Column(
@@ -107,19 +182,20 @@ class _MyHomePageState extends State<MyHomePage> {
           // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
           // action in the IDE, or press "p" in the console), to see the
           // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             const Text(
               'click to go to area',
             ),
-            const SizedBox(height: 50),
+           // const SizedBox(height: 50),
             ElevatedButton(
               child: const Text('Add Test Circle to Firestore'),
               onPressed: () {
                 addTestCircle(); // this will insert the dummy circle into Firestore
               },
             ),
-            const SizedBox(height: 50),
+          //  const SizedBox(height: 50),
               ElevatedButton(
               child: const Text('View Monthly Bills'),
               onPressed: () {
@@ -130,7 +206,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 );
               }
             ),
-            const SizedBox(height: 50), 
+          //  const SizedBox(height: 50), 
 
 
               ElevatedButton(
@@ -143,7 +219,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 );
               }
             ),
-            const SizedBox(height: 50), 
+          //  const SizedBox(height: 50), 
 
 
              ElevatedButton(
@@ -156,7 +232,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 );
               }
               ),
-              const SizedBox(height: 50), 
+         //     const SizedBox(height: 50), 
 
 
               ElevatedButton(
@@ -172,7 +248,7 @@ class _MyHomePageState extends State<MyHomePage> {
   
           ],
         ),
-      ),
+      ),*/
     );
   }
 }
