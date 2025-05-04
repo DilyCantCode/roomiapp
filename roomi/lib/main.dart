@@ -51,12 +51,12 @@ class MyHomePage extends StatefulWidget {
   // case the title) provided by the parent (in this case the App widget) and
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
-  Future<void> addTestCircle() async {
-    await FirebaseFirestore.instance.collection('circles').add({
-     'name': 'Test Circle',
-      'created_at': FieldValue.serverTimestamp(),
-    });
-  }
+  // Future<void> addTestCircle() async {
+  //   await FirebaseFirestore.instance.collection('circles').add({
+  //    'name': 'Test Circle',
+  //     'created_at': FieldValue.serverTimestamp(),
+  //   });
+  // }
 
   
   final String title;
