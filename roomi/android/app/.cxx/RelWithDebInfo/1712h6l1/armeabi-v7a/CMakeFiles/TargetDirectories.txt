@@ -1,0 +1,2 @@
+C:/Users/antho/Projects/roomiapp/roomi/android/app/.cxx/RelWithDebInfo/1712h6l1/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/Users/antho/Projects/roomiapp/roomi/android/app/.cxx/RelWithDebInfo/1712h6l1/armeabi-v7a/CMakeFiles/rebuild_cache.dir
