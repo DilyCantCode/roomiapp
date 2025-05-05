@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class CreateCircleScreen extends StatefulWidget {
   const CreateCircleScreen({super.key});
@@ -13,32 +14,35 @@ class _CreateCircleScreenState extends State<CreateCircleScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   void _createCircle() async {
-    final circleName = _circleNameController.text.trim();
+  final circleName = _circleNameController.text.trim();
+  final currentUser = FirebaseAuth.instance.currentUser;
 
-    if (circleName.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a circle name')),
-      );
-      return;
-    }
-
-    try {
-      await _firestore.collection('circles').add({
-        'name': circleName,
-        'createdAt': Timestamp.now(),
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Circle created successfully!')),
-      );
-
-      Navigator.pop(context); // Go back to home screen
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error creating circle: $e')),
-      );
-    }
+  if (circleName.isEmpty || currentUser == null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Please enter a circle name or log in')),
+    );
+    return;
   }
+
+  try {
+    // 
+    await FirebaseFirestore.instance.collection('circles').add({
+      'name': circleName,
+      'createdAt': FieldValue.serverTimestamp(),
+      'createdBy': currentUser.uid,
+      'members': [currentUser.uid],
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Circle created successfully!')),
+    );
+    Navigator.pop(context);
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error creating circle: $e')),
+    );
+  }
+}
 
   @override
   Widget build(BuildContext context) {

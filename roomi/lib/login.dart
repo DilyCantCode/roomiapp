@@ -1,57 +1,75 @@
 import 'package:flutter/material.dart';
-import 'main.dart'; // Import your main file to access MyHomePage
+import 'package:firebase_auth/firebase_auth.dart';
+import 'main.dart';
+import 'services/auth_service.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool isLogin = true;
+
+  void _submit() async {
+    final authService = AuthService();
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+
+    User? user;
+    if (isLogin) {
+      user = await authService.signIn(email, password);
+    } else {
+      user = await authService.signUp(email, password);
+    }
+
+    if (user != null) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const MyHomePage(title: 'Roomi App :)'),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to ${isLogin ? "login" : "sign up"}')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Login'),
-      ),
+      appBar: AppBar(title: Text(isLogin ? 'Login' : 'Sign Up')),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Email Input
             TextField(
-              decoration: const InputDecoration(
-                labelText: 'Email',
-                border: OutlineInputBorder(),
-              ),
-              keyboardType: TextInputType.emailAddress,
+              controller: _emailController,
+              decoration: const InputDecoration(labelText: 'Email'),
             ),
-            
-            const SizedBox(height: 16),
-            
-            // Password Input
+            const SizedBox(height: 12),
             TextField(
-              decoration: const InputDecoration(
-                labelText: 'Password',
-                border: OutlineInputBorder(),
-              ),
+              controller: _passwordController,
               obscureText: true,
+              decoration: const InputDecoration(labelText: 'Password'),
             ),
-            
             const SizedBox(height: 24),
-            
-            // Login Button
             ElevatedButton(
-              onPressed: () {
-                // goes to main not wokring yet
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const MyHomePage(title: 'Roomi App :)'),
-                  ),
-                );
-              },
-              child: const Text('Login'),
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 50),
-              ),
+              onPressed: _submit,
+              child: Text(isLogin ? 'Login' : 'Sign Up'),
+            ),
+            TextButton(
+              onPressed: () => setState(() => isLogin = !isLogin),
+              child: Text(isLogin
+                  ? "Don't have an account? Sign Up"
+                  : "Already have an account? Login"),
             ),
           ],
         ),
