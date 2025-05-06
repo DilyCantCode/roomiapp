@@ -1,0 +1,2 @@
+C:/Users/nicor/Dev/CINS467-S25-Nicolas-Reiss/roomiapp/roomi/android/app/.cxx/RelWithDebInfo/1670651d/x86/CMakeFiles/edit_cache.dir
+C:/Users/nicor/Dev/CINS467-S25-Nicolas-Reiss/roomiapp/roomi/android/app/.cxx/RelWithDebInfo/1670651d/x86/CMakeFiles/rebuild_cache.dir

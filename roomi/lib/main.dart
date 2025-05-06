@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:roomi/routes/join_circle.dart';
 import 'firebase_options.dart';
 
 import 'routes/create_circle.dart';
@@ -15,7 +16,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform, // ✅ Web support
+    options: DefaultFirebaseOptions.currentPlatform, 
   );
   runApp(const MyApp());
 }
@@ -40,6 +41,8 @@ class MyApp extends StatelessWidget {
         '/route4': (context) => const LeaseScreen(),
         '/message_center': (context) => const MessageCenterScreen(),
         '/circle': (context) => const CircleScreen(),
+        '/join_circle': (context) => const JoinCircleScreen(),
+
       },
     );
   }
@@ -139,6 +142,15 @@ class _MyHomePageState extends State<MyHomePage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => const CircleScreen()),
+                    );
+                  },
+                ),
+                ElevatedButton(
+                  child: const Text('Join a Circle'),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const JoinCircleScreen()),
                     );
                   },
                 ),
