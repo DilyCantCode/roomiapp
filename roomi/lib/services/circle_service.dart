@@ -5,7 +5,7 @@ import 'dart:math';
 class CircleService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // 1. Create a new circle
+  //Create a new circle
   Future<String> createCircle(String name) async {
     final currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser == null) throw Exception('Not authenticated');
@@ -21,19 +21,21 @@ class CircleService {
     return docRef.id;
   }
 
-  // 2. Join circle with invite code
- Future<void> joinCircleWithCode(String code) async {
+  //Join circle with invite code
+ Future<Map<String, String>> joinCircleWithCode(String code) async {
   final currentUser = FirebaseAuth.instance.currentUser;
   if (currentUser == null) throw Exception('User not authenticated');
 
   try {
     final normalizedCode = code.trim().toUpperCase();
+    if (normalizedCode.length != 6) {
+      throw Exception('Invite code must be exactly 6 characters');
+    }
     print('Normalized Code: $normalizedCode');
 
-    // Search all inviteCodes subcollections by document ID (invite code)
     final query = await FirebaseFirestore.instance
-        .collectionGroup('inviteCodes') // Search through all 'inviteCodes' subcollections
-        .where(FieldPath.documentId, isEqualTo: normalizedCode) // Match against the document ID
+        .collectionGroup('inviteCodes')
+        .where('code', isEqualTo: normalizedCode)
         .limit(1)
         .get();
 
@@ -42,23 +44,15 @@ class CircleService {
     }
 
     final codeDoc = query.docs.first;
-    final circleRef = codeDoc.reference.parent.parent;
-    if (circleRef == null) {
-      throw Exception('Circle reference not found');
-    }
-
-    // Get the invite code data
     final codeData = codeDoc.data();
+    final circleRef = codeDoc.reference.parent.parent;
 
-    // Check usage limits
+    if (circleRef == null) throw Exception('Circle reference not found');
+
     final uses = codeData['uses'] ?? 0;
     final maxUses = codeData['maxUses'] ?? 0;
+    if (uses >= maxUses) throw Exception('This code has reached its maximum uses');
 
-    if (uses >= maxUses) {
-      throw Exception('This code has reached its maximum uses');
-    }
-
-    // Check expiration
     final expiresAtStr = codeData['expiresAt'];
     if (expiresAtStr is String) {
       final expiresAt = DateTime.tryParse(expiresAtStr);
@@ -69,38 +63,46 @@ class CircleService {
       throw Exception('Invalid expiration format');
     }
 
-    // Check if user is already a member
     final circleSnap = await circleRef.get();
-    if (!circleSnap.exists) {
-      throw Exception('Circle not found');
-    }
+    if (!circleSnap.exists) throw Exception('Circle not found');
 
     final members = List<String>.from(circleSnap.data()?['members'] ?? []);
     if (members.contains(currentUser.uid)) {
       throw Exception('You are already a member of this circle');
     }
 
-    // Run the join transaction
     await FirebaseFirestore.instance.runTransaction((transaction) async {
-      // Increment code uses
       transaction.update(codeDoc.reference, {
         'uses': FieldValue.increment(1),
       });
 
-      // Add user to members array
       transaction.update(circleRef, {
         'members': FieldValue.arrayUnion([currentUser.uid]),
       });
+
+      final logRef = codeDoc.reference.collection('logs').doc(currentUser.uid);
+      transaction.set(logRef, {
+        'joinedAt': FieldValue.serverTimestamp(),
+      });
     });
+
+    return {
+      'circleId': circleRef.id,
+      'name': circleSnap.data()?['name'] ?? 'Unnamed Circle',
+    };
+
   } on FirebaseException catch (e) {
+    // This will show up in Android Studio logcat / debug console
+    print('Firestore error caught: $e');
     throw Exception('Firestore error: ${e.message}');
   } catch (e) {
+    print('General join error: $e');
     throw Exception('Join circle failed: $e');
   }
 }
 
 
-  // 3. Generate invite code for a circle
+  // Generate invite code for a circle
   Future<String> generateInviteCode(String circleId) async {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     final code = List.generate(6, (index) => chars[Random().nextInt(chars.length)]).join();
@@ -115,14 +117,14 @@ class CircleService {
           'createdAt': FieldValue.serverTimestamp(),
           'createdBy': FirebaseAuth.instance.currentUser!.uid,
           'expiresAt': DateTime.now().add(const Duration(days: 7)).toIso8601String(),
-          'maxUses': 10,
+          'maxUses': 9999999, // unlimited uses cause it was causing issues LOL
           'uses': 0,
         });
 
     return code;
   }
 
-  // 4. Get stream of user's circles
+  // Get stream of user's circles
   Stream<QuerySnapshot> getUserCircles(String userId) {
     return _firestore
         .collection('circles')
@@ -131,7 +133,7 @@ class CircleService {
         .snapshots();
   }
 
-  // 5. Send message to circle
+  // Send message to circle
   Future<void> sendMessage(String circleId, String text) async {
     final currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser == null) throw Exception('Not authenticated');
@@ -153,7 +155,7 @@ class CircleService {
         .update({'lastActivity': FieldValue.serverTimestamp()});
   }
 
-  // 6. Get circle messages stream
+  // Get circle messages stream
   Stream<QuerySnapshot> getMessages(String circleId) {
     return _firestore
         .collection('circles')
@@ -164,7 +166,7 @@ class CircleService {
         .snapshots();
   }
 
-  // 7. Remove user from circle
+  // Remove user from circle
   Future<void> leaveCircle(String circleId) async {
     final currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser == null) throw Exception('Not authenticated');

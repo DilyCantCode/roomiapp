@@ -11,7 +11,7 @@ class JoinCircleScreen extends StatefulWidget {
 }
 
 class _JoinCircleScreenState extends State<JoinCircleScreen> {
-  final CircleService _circleService = CircleService(); // Initialize service
+  final CircleService _circleService = CircleService();
   final TextEditingController _inviteCodeController = TextEditingController();
   bool _isJoining = false;
 
@@ -25,22 +25,23 @@ class _JoinCircleScreenState extends State<JoinCircleScreen> {
     }
 
     setState(() => _isJoining = true);
-    
+
     try {
-      // Use the service instead of local validation
-      await _circleService.joinCircleWithCode(code);
-      
+      final result = await _circleService.joinCircleWithCode(code);
+      final circleName = result['name'];
+
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('✅ Successfully joined circle!'),
+        SnackBar(
+          content: Text('Joined "$circleName"!'),
           backgroundColor: Colors.green,
         ),
       );
-      Navigator.pop(context);
+
+      Navigator.pop(context); // Or navigate to that circle if needed
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('❌ ${e.toString()}'),
+          content: Text('${e.toString()}'),
           backgroundColor: Colors.red,
         ),
       );
@@ -48,8 +49,6 @@ class _JoinCircleScreenState extends State<JoinCircleScreen> {
       setState(() => _isJoining = false);
     }
   }
-
-  // REMOVED: The old _validateAndJoinCircle() method entirely
 
   @override
   Widget build(BuildContext context) {

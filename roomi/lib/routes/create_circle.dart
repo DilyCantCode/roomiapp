@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/services.dart'; 
+import 'package:flutter/services.dart';
 import 'dart:math';
 
 class CreateCircleScreen extends StatefulWidget {
@@ -35,19 +35,32 @@ class _CreateCircleScreenState extends State<CreateCircleScreen> {
     }
 
     setState(() => _isCreating = true);
-    
+
     try {
-      // Create the circle
+      final existing = await _firestore
+          .collection('circles')
+          .where('createdBy', isEqualTo: currentUser.uid)
+          .where('name', isEqualTo: circleName)
+          .get();
+
+      if (existing.docs.isNotEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('You already have a circle with this name.')),
+        );
+        setState(() => _isCreating = false);
+        return;
+      }
+
       final circleRef = await _firestore.collection('circles').add({
         'name': circleName,
         'createdAt': FieldValue.serverTimestamp(),
         'createdBy': currentUser.uid,
         'members': [currentUser.uid],
+        'lastActivity': FieldValue.serverTimestamp(),
       });
 
-      // Generate an invite code
-      final inviteCode = await _generateInviteCode(circleRef.id);
-      
+      final inviteCode = await _generateUniqueInviteCode(circleRef.id);
+      print('New invite code generated: $inviteCode');
       setState(() => _generatedInviteCode = inviteCode);
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -62,23 +75,37 @@ class _CreateCircleScreenState extends State<CreateCircleScreen> {
     }
   }
 
-  Future<String> _generateInviteCode(String circleId) async {
+  Future<String> _generateUniqueInviteCode(String circleId) async {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     final random = Random();
-    final code = List.generate(6, (index) => chars[random.nextInt(chars.length)]).join();
-    
-    await _firestore
-  .collection('circles')
-  .doc(circleId)
-  .collection('inviteCodes')
-  .doc(code)
-  .set({
-    'code': code, 
-    'createdAt': FieldValue.serverTimestamp(),
-    'createdBy': FirebaseAuth.instance.currentUser!.uid,
-  });
+    String code;
+    DocumentSnapshot snapshot;
 
-    
+    do {
+      code = List.generate(6, (_) => chars[random.nextInt(chars.length)]).join();
+      snapshot = await _firestore
+          .collection('circles')
+          .doc(circleId)
+          .collection('inviteCodes')
+          .doc(code)
+          .get();
+    } while (snapshot.exists);
+
+    await _firestore
+        .collection('circles')
+        .doc(circleId)
+        .collection('inviteCodes')
+        .doc(code)
+        .set({
+      'code': code,
+      'circleId': circleId,
+      'createdAt': FieldValue.serverTimestamp(),
+      'createdBy': FirebaseAuth.instance.currentUser!.uid,
+      'maxUses': 9999999,
+      'uses': 0,
+      'expiresAt': DateTime.now().add(const Duration(days: 7)).toIso8601String(),
+    });
+
     return code;
   }
 
@@ -116,8 +143,12 @@ class _CreateCircleScreenState extends State<CreateCircleScreen> {
                 ),
                 const SizedBox(height: 30),
                 ElevatedButton.icon(
-                  icon: _isCreating 
-                      ? const CircularProgressIndicator(color: Colors.white)
+                  icon: _isCreating
+                      ? const SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                        )
                       : const Icon(Icons.create),
                   label: Text(_isCreating ? 'Creating...' : 'Create Circle'),
                   onPressed: _isCreating ? null : _createCircle,
