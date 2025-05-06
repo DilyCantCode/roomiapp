@@ -8,7 +8,7 @@ import 'routes/create_circle.dart';
 import 'routes/bills.dart';
 import 'routes/settings.dart';
 import 'routes/lease.dart';
-import 'routes/message_center.dart';
+//import 'routes/message_center.dart';
 import 'routes/circle.dart';
 import 'login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
         '/bills': (context) => const BillsScreen(),
         '/settings': (context) => const SettingsScreen(),
         '/route4': (context) => const LeaseScreen(),
-        '/message_center': (context) => const MessageCenterScreen(),
+       // '/message_center': (context) => const MessageCenterScreen(),
         '/circle': (context) => const CircleScreen(),
         '/join_circle': (context) => const JoinCircleScreen(),
 
@@ -127,7 +127,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     );
                   },
                 ),
-                ElevatedButton(
+            /*    ElevatedButton(
                   child: const Text('Message Center'),
                   onPressed: () {
                     Navigator.push(
@@ -135,7 +135,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       MaterialPageRoute(builder: (context) => const MessageCenterScreen()),
                     );
                   },
-                ),
+                ),*/
                 ElevatedButton(
                   child: const Text('Circle'),
                   onPressed: () {

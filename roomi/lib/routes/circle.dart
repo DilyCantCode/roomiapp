@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:roomi/routes/circle_homepage.dart';
+
 
 class CircleScreen extends StatelessWidget {
   const CircleScreen({super.key});
@@ -20,7 +22,7 @@ class CircleScreen extends StatelessWidget {
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('circles')
-            .where('members', arrayContains: currentUser.uid) // ✅ filter by current user
+            .where('members', arrayContains: currentUser.uid) 
             .orderBy('createdAt', descending: true)
             .snapshots(),
         builder: (context, snapshot) {
@@ -48,7 +50,23 @@ class CircleScreen extends StatelessWidget {
               return ListTile(
                 title: Text(name),
                 subtitle: Text('Created at: $createdAt'),
+                trailing: ElevatedButton(
+                  onPressed: () {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => CircleHomepageScreen(
+        circleId: circles[index].id,
+        circleData: data,
+      ),
+    ),
+  );
+},
+
+                  child: const Text('Open'),
+                ),
               );
+
             },
           );
         },
@@ -57,6 +75,7 @@ class CircleScreen extends StatelessWidget {
         onPressed: () => Navigator.pop(context),
         child: const Icon(Icons.home),
       ),
+      
     );
   }
 }
