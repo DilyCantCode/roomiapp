@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:roomi/routes/join_circle.dart';
-import 'firebase_options.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'firebase_options.dart';
 import 'routes/create_circle.dart';
 import 'routes/bills.dart';
 import 'routes/settings.dart';
 import 'routes/lease.dart';
-//import 'routes/message_center.dart';
 import 'routes/circle.dart';
+import 'routes/join_circle.dart';
 import 'login.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform, 
+    options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(const MyApp());
 }
@@ -32,17 +31,15 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const LoginScreen(), // ✅ Start at login
+      home: const LoginScreen(),
       routes: {
         '/home': (context) => const MyHomePage(title: 'Roomi App :)'),
         '/create_circle': (context) => const CreateCircleScreen(),
         '/bills': (context) => const BillsScreen(),
         '/settings': (context) => const SettingsScreen(),
         '/route4': (context) => const LeaseScreen(),
-       // '/message_center': (context) => const MessageCenterScreen(),
         '/circle': (context) => const CircleScreen(),
         '/join_circle': (context) => const JoinCircleScreen(),
-
       },
     );
   }
@@ -75,6 +72,18 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => const LoginScreen()),
+                (route) => false,
+              );
+            },
+          ),
+        ],
       ),
       body: Center(
         child: Row(
@@ -89,7 +98,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const CreateCircleScreen()),
+                      MaterialPageRoute(
+                          builder: (context) => const CreateCircleScreen()),
                     );
                   },
                 ),
@@ -98,7 +108,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const BillsScreen()),
+                      MaterialPageRoute(
+                          builder: (context) => const BillsScreen()),
                     );
                   },
                 ),
@@ -107,7 +118,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const SettingsScreen()),
+                      MaterialPageRoute(
+                          builder: (context) => const SettingsScreen()),
                     );
                   },
                 ),
@@ -123,25 +135,18 @@ class _MyHomePageState extends State<MyHomePage> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const LeaseScreen()),
+                      MaterialPageRoute(
+                          builder: (context) => const LeaseScreen()),
                     );
                   },
                 ),
-            /*    ElevatedButton(
-                  child: const Text('Message Center'),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const MessageCenterScreen()),
-                    );
-                  },
-                ),*/
                 ElevatedButton(
                   child: const Text('Circle'),
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const CircleScreen()),
+                      MaterialPageRoute(
+                          builder: (context) => const CircleScreen()),
                     );
                   },
                 ),
@@ -150,7 +155,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const JoinCircleScreen()),
+                      MaterialPageRoute(
+                          builder: (context) => const JoinCircleScreen()),
                     );
                   },
                 ),
