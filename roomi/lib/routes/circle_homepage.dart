@@ -25,19 +25,24 @@ class CircleHomepageScreen extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Text(
-              'Welcome to ${circleData['name']}!\nCircle ID: $circleId',
-              textAlign: TextAlign.center,
-            ),
-            if (circleData['location'] != null && circleData['location'].toString().isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: Text(
-                  'Location: ${circleData['location']}',
+            child: Column(
+              children: [
+                Text(
+                  'Welcome to ${circleData['name']}!\nCircle ID: $circleId',
                   textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
                 ),
-              ),
+                circleData['location'] != null && circleData['location'].toString().isNotEmpty
+                    ? Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          'Location: ${circleData['location']}',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
+                        ),
+                      )
+                    : const SizedBox.shrink(),
+              ],
+            ),
           ),
           ElevatedButton(
             onPressed: () {
