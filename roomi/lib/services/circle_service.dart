@@ -178,4 +178,24 @@ class CircleService {
           'members': FieldValue.arrayRemove([currentUser.uid])
         });
   }
+  Future<void> kickMember(String circleId, String memberUid) async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) throw Exception('Not authenticated');
+
+    final circleDoc = await _firestore.collection('circles').doc(circleId).get();
+    if (!circleDoc.exists) throw Exception('Circle not found');
+
+    final data = circleDoc.data();
+    if (data == null) throw Exception('Circle data not found');
+
+    final createdBy = data['createdBy'];
+    if (createdBy != currentUser.uid) {
+      throw Exception('Only the circle creator can remove members');
+    }
+
+    await _firestore.collection('circles').doc(circleId).update({
+      'members': FieldValue.arrayRemove([memberUid])
+    });
+  }
+
 }
