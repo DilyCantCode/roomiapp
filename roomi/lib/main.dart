@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const LoginScreen(), // ✅ Start at login
+      home: const LoginScreen(), // 
       routes: {
         '/home': (context) => const MyHomePage(title: 'Roomi App :)'),
         '/create_circle': (context) => const CreateCircleScreen(),

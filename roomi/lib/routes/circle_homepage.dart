@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:roomi/routes/message_center.dart'; // Make sure this is the correct path
+import 'package:roomi/routes/message_center.dart'; 
 
 class CircleHomepageScreen extends StatelessWidget {
   final String circleId;
@@ -23,6 +23,15 @@ class CircleHomepageScreen extends StatelessWidget {
               'Welcome to ${circleData['name']}!\nCircle ID: $circleId',
               textAlign: TextAlign.center,
             ),
+            if (circleData['location'] != null && circleData['location'].toString().isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Text(
+                  'Location: ${circleData['location']}',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
+                ),
+              ),
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () {

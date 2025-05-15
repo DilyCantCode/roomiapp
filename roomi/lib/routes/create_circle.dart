@@ -3,6 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'dart:math';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
+import 'pick_location_screen.dart';
 
 class CreateCircleScreen extends StatefulWidget {
   const CreateCircleScreen({super.key});
@@ -16,11 +19,57 @@ class _CreateCircleScreenState extends State<CreateCircleScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   String? _generatedInviteCode;
   bool _isCreating = false;
+  String? _selectedAddress;
 
   @override
   void dispose() {
     _circleNameController.dispose();
     super.dispose();
+  }
+
+  Future<void> _getCurrentLocation() async {
+    try {
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Location services are disabled.')),
+        );
+        return;
+      }
+
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) return;
+      }
+
+      final pos = await Geolocator.getCurrentPosition();
+      final placemarks = await placemarkFromCoordinates(pos.latitude, pos.longitude);
+
+      if (placemarks.isNotEmpty) {
+        final p = placemarks.first;
+        setState(() {
+          _selectedAddress = '${p.street}, ${p.locality}, ${p.administrativeArea}, ${p.country}';
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error getting location: $e')),
+      );
+    }
+  }
+
+  Future<void> _pickLocationOnMap() async {
+    final pickedAddress = await Navigator.push<String>(
+      context,
+      MaterialPageRoute(builder: (_) => const PickLocationScreen()),
+    );
+
+    if (pickedAddress != null) {
+      setState(() {
+        _selectedAddress = pickedAddress;
+      });
+    }
   }
 
   Future<void> _createCircle() async {
@@ -57,6 +106,7 @@ class _CreateCircleScreenState extends State<CreateCircleScreen> {
         'createdBy': currentUser.uid,
         'members': [currentUser.uid],
         'lastActivity': FieldValue.serverTimestamp(),
+        'location': _selectedAddress ?? '',
       });
 
       final inviteCode = await _generateUniqueInviteCode(circleRef.id);
@@ -140,6 +190,25 @@ class _CreateCircleScreenState extends State<CreateCircleScreen> {
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.group),
                   ),
+                ),
+                const SizedBox(height: 20),
+                if (_selectedAddress != null) ...[
+                  Text('Selected Location:', style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text(_selectedAddress!),
+                  const SizedBox(height: 10),
+                ],
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.my_location),
+                  label: const Text('Use Current Location'),
+                  onPressed: _getCurrentLocation,
+                  style: ElevatedButton.styleFrom(minimumSize: Size(double.infinity, 50)),
+                ),
+                const SizedBox(height: 10),
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.map),
+                  label: const Text('Pick on Map'),
+                  onPressed: _pickLocationOnMap,
+                  style: ElevatedButton.styleFrom(minimumSize: Size(double.infinity, 50)),
                 ),
                 const SizedBox(height: 30),
                 ElevatedButton.icon(

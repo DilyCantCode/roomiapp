@@ -1,0 +1,1 @@
+C:\Users\antho\Projects\roomiapp\roomi\build\app\intermediates\cxx\RelWithDebInfo\2y41154t\obj\arm64-v8a
